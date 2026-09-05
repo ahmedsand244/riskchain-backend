@@ -167,13 +167,24 @@ AUTHENTICATION_BACKENDS = [
 
 SITE_ID = 1
 LOGIN_REDIRECT_URL = '/'
-ACCOUNT_LOGOUT_REDIRECT_URL = '/'
+ACCOUNT_LOGOUT_REDIRECT_URL = '/login/'
 ACCOUNT_LOGIN_METHODS = {'email'}
 ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
 ACCOUNT_EMAIL_VERIFICATION = 'none' # For prototype simplicity
+SOCIALACCOUNT_LOGIN_ON_GET = True
+
+GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID', '').strip()
+GOOGLE_CLIENT_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET', '').strip()
 
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
+        'APPS': [
+            {
+                'client_id': GOOGLE_CLIENT_ID or 'riskchain-demo-client-id.apps.googleusercontent.com',
+                'secret': GOOGLE_CLIENT_SECRET or 'riskchain-demo-secret',
+                'key': ''
+            }
+        ],
         'SCOPE': [
             'profile',
             'email',

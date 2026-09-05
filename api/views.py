@@ -16,7 +16,8 @@ from django.conf import settings
 def login_page(request):
     """Serve the login page"""
     if request.user.is_authenticated:
-        return render(request, 'index.html')
+        from django.shortcuts import redirect
+        return redirect('/')
     return render(request, 'login.html')
 
 def dashboard(request):
@@ -208,6 +209,33 @@ def auth_status(request):
             }
         })
     return JsonResponse({"is_authenticated": False})
+
+def google_login_dispatcher(request):
+    """
+    Dispatcher for Google Login:
+    - If a valid custom GOOGLE_CLIENT_ID is configured, redirect to allauth Google OAuth.
+    - Otherwise (or if ?mode=demo is requested), log in directly as Google Agent.
+    """
+    from django.shortcuts import redirect
+    from django.conf import settings
+    
+    client_id = getattr(settings, 'GOOGLE_CLIENT_ID', '').strip()
+    has_real_id = bool(client_id and not client_id.startswith('riskchain-') and not client_id.startswith('your-'))
+    
+    if has_real_id and request.GET.get('mode') != 'demo':
+        return redirect('/accounts/google/login/')
+    
+    # Create or get Google demo user
+    user, _ = User.objects.get_or_create(
+        email='google.agent@riskchain.ai',
+        defaults={
+            'username': 'google_agent',
+            'first_name': 'Google Agent',
+            'is_active': True
+        }
+    )
+    login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+    return redirect('/')
 
 @csrf_exempt
 def auth_login(request):

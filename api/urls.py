@@ -14,6 +14,7 @@ urlpatterns = [
     path('api/auth/login/', views.auth_login, name='auth_login'),
     path('api/auth/logout/', views.auth_logout, name='auth_logout'),
     path('api/auth/register/', views.auth_register, name='auth_register'),
+    path('api/auth/google/', views.google_login_dispatcher, name='google_login_dispatcher'),
     path('login/', views.login_page, name='login_page'),
     path('', views.dashboard, name='dashboard'),
 ]
