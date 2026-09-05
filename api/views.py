@@ -1,8 +1,6 @@
 import json
 import os
 import random
-import joblib
-import pandas as pd
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -42,6 +40,9 @@ def predict_risk(request):
             prediction_label = "ON-TIME"
             
             try:
+                import joblib
+                import pandas as pd
+
                 # Load the real pipeline model dynamically
                 model_path = os.path.join(settings.BASE_DIR, 'late_delivery_model.pkl')
                 if not os.path.exists(model_path):
